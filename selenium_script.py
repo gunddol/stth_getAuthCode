@@ -1,0 +1,94 @@
+import boto3
+import requests
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from urllib.parse import urlparse, parse_qs
+import time
+
+def get_aws_keys(AWS_KEY_URL):
+    response = requests.get(AWS_KEY_URL)
+    
+    if response.status_code == 200:
+        lines = response.text.strip().split("\n")
+        access_key = lines[0].strip()
+        secret_key = lines[1].strip()
+        return access_key, secret_key
+    else:
+        raise Exception(f"❌ AWS 키 파일 다운로드 실패 (HTTP {response.status_code})")
+
+def upload_to_s3(code):
+    try:
+        AWS_KEY_URL = "https://stth-upload.s3.ap-northeast-2.amazonaws.com/AllUser/PrivateKey/aws_key.txt"
+        AWS_ACCESS_KEY, AWS_SECRET_KEY = get_aws_keys(AWS_KEY_URL)
+        S3_BUCKET_NAME = "stth-upload"
+        S3_FILE_NAME = "auth_code.txt"
+
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY,
+            aws_secret_access_key=AWS_SECRET_KEY
+        )
+
+        s3_client.put_object(
+            Bucket=S3_BUCKET_NAME,
+            Key=S3_FILE_NAME,
+            Body=code
+        )
+        print(f"✅ S3에 업로드 완료: s3://{S3_BUCKET_NAME}/{S3_FILE_NAME}")
+    except Exception as e:
+        print(f"❌ S3 업로드 실패: {str(e)}")
+
+def create_driver():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    service = Service("/usr/bin/chromedriver")
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    
+    return driver
+
+def get_auth_code(driver):
+    try:
+        target_url = "https://eclogin.cafe24.com/Shop/"
+        driver.get(target_url)
+        time.sleep(2)
+
+        driver.find_element(By.ID, "mall_id").send_keys("suraktantan")
+        time.sleep(0.5)
+        driver.find_element(By.ID, "userpasswd").send_keys("b9347711")
+        time.sleep(0.5)
+        driver.find_element(By.CSS_SELECTOR, "button.btnStrong.large").click()
+        time.sleep(3)
+
+        url = "https://suraktantan.cafe24api.com/api/v2/oauth/authorize?response_type=code&client_id=t8rcXlTUBRyvydVORFGJ8A&state=stth_img&redirect_uri=https://suraktantan.cafe24.com/board/consult/list.html&scope=mall.read_community,mall.write_community"
+        driver.get(url)
+        time.sleep(3)
+
+        final_url = driver.current_url
+        # print("Redirected URL:", final_url)
+
+        query_params = parse_qs(urlparse(final_url).query)
+        code = query_params.get("code", [""])[0]
+        print("Authorization Code:", code)
+
+        upload_to_s3(code)
+
+    finally:
+        driver.quit()
+
+def main():
+    driver = create_driver()
+    try:
+        get_auth_code(driver)
+    except Exception as e:
+        print(f"❌ Error: {str(e)}")
+    finally:
+        driver.quit()
+
+if __name__ == "__main__":
+    main()

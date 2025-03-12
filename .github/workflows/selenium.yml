@@ -1,0 +1,30 @@
+name: Run Selenium STTH SignUp
+
+on:
+  workflow_dispatch:
+
+
+    
+jobs:
+  run-selenium:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v3
+
+      - name: 기본 Chrome 및 ChromeDriver 확인
+        run: |
+          google-chrome --version
+          which google-chrome
+          chromedriver --version
+          which chromedriver
+
+      - name: Python 및 Selenium 설치
+        run: |
+          python -m pip install --upgrade pip
+          pip install selenium requests
+
+      - name: Selenium 스크립트 실행
+        run: |
+          python selenium_script.py
