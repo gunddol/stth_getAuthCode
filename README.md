@@ -1,0 +1,1 @@
+# stth_getAuthCode
