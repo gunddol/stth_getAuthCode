@@ -44,6 +44,7 @@ def upload_to_s3(code):
 
 
 def upload_cafe24(access_token, id, category, image_url):
+  print(f"id: {id}, category: {category}, image_url: {image_url}")
   try:
     post_url = "https://suraktantan.cafe24api.com/api/v2/admin/boards/9/articles"
     headers = {
