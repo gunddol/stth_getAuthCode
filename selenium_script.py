@@ -9,40 +9,6 @@ import time
 import argparse
 import json
 
-def get_aws_keys(AWS_KEY_URL):
-    response = requests.get(AWS_KEY_URL)
-    
-    if response.status_code == 200:
-        lines = response.text.strip().split("\n")
-        access_key = lines[0].strip()
-        secret_key = lines[1].strip()
-        return access_key, secret_key
-    else:
-        raise Exception(f"❌ AWS 키 파일 다운로드 실패 (HTTP {response.status_code})")
-
-def upload_to_s3(code):
-    try:
-        AWS_KEY_URL = "https://stth-upload.s3.ap-northeast-2.amazonaws.com/AllUser/PrivateKey/aws_key.txt"
-        AWS_ACCESS_KEY, AWS_SECRET_KEY = get_aws_keys(AWS_KEY_URL)
-        S3_BUCKET_NAME = "stth-upload"
-        S3_FILE_NAME = "AllUser/PrivateKey/access_token.txt"
-
-        s3_client = boto3.client(
-            "s3",
-            aws_access_key_id=AWS_ACCESS_KEY,
-            aws_secret_access_key=AWS_SECRET_KEY
-        )
-
-        s3_client.put_object(
-            Bucket=S3_BUCKET_NAME,
-            Key=S3_FILE_NAME,
-            Body=code
-        )
-        print(f"✅ S3에 업로드 완료: s3://{S3_BUCKET_NAME}/{S3_FILE_NAME}")
-    except Exception as e:
-        print(f"❌ S3 업로드 실패: {str(e)}")
-
-
 def upload_cafe24(access_token, id, category, image_url):
   print(f"id: {id}, category: {category}, image_url: {image_url}")
   try:
