@@ -1,4 +1,4 @@
-name: Run Selenium STTH SignUp
+name: Run Selenium STTH upload process
 
 on:
   workflow_dispatch: 
@@ -41,4 +41,8 @@ jobs:
 
       - name: Selenium 스크립트 실행
         run: |
-          python selenium_script.py
+          python selenium_script.py \
+            --id "${{ github.event.inputs.id }}" \
+            --category "${{ github.event.inputs.category }}" \
+            --image_url "${{ github.event.inputs.image_url }}"
+
