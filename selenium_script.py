@@ -64,7 +64,7 @@ def upload_cafe24(access_token, id, category, image_url):
           "member_id": id,
           "reply_user_id": "admin",
           "reply_status": "N",
-          "category_no": category,
+          "category_no": int(category),
           "attach_file_urls": [
               {
                   "name": image_url.split('/')[-1],
