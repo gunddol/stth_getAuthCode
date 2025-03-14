@@ -1,7 +1,21 @@
 name: Run Selenium STTH SignUp
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: 
+    inputs:
+      id:
+        description: 'id'
+        required: true
+        type: string
+      category:
+        description: 'category'
+        required: true
+        type: string
+      image_url:
+        description: 'image_url'
+        required: true
+        type: string
+
 
 
     
