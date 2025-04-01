@@ -18,28 +18,54 @@ def upload_cafe24(access_token, id, category, image_url):
       "Content-Type": "application/json",
       "X-Cafe24-Api-Version": "2025-03-01"
     }
-    post_data = {
-      "shop_no": 1,
-      "requests": [
-        {
-          "writer": id,
-          "title": "수락탄탄해 이미지 업로드",
-          "content": "contents",
-          "client_ip": "127.0.0.1",
-          "secret": "T",
-          "member_id": id,
-          "reply_user_id": "admin",
-          "reply_status": "N",
-          "category_no": int(category),
-          "attach_file_urls": [
-              {
-                  "name": image_url.split('/')[-1],
-                  "url": image_url
-              }
-          ]
-        }
-      ]
-    }
+
+    if category == "7":
+      post_data = {
+        "shop_no": 1,
+        "requests": [
+          {
+            "writer": id,
+            "title": "Re(we)탄탄 챌린지 도전!",
+            "content": "contents",
+            "client_ip": "127.0.0.1",
+            "secret": "T",
+            "member_id": id,
+            "reply_user_id": "admin",
+            "reply_status": "N",
+            "category_no": int(category),
+            "attach_file_urls": [
+                {
+                    "name": image_url.split('/')[-1],
+                    "url": image_url
+                }
+            ]
+          }
+        ]
+      }
+    else:
+      post_data = {
+        "shop_no": 1,
+        "requests": [
+          {
+            "writer": id,
+            "title": "하루탄탄 챌린지 도전!",
+            "content": "contents",
+            "client_ip": "127.0.0.1",
+            "secret": "T",
+            "member_id": id,
+            "reply_user_id": "admin",
+            "reply_status": "N",
+            "category_no": int(category),
+            "attach_file_urls": [
+                {
+                    "name": image_url.split('/')[-1],
+                    "url": image_url
+                }
+            ]
+          }
+        ]
+      }
+
     json_data = json.dumps(post_data)
 
     post_response = requests.post(post_url, headers=headers, data=json_data)
