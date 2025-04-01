@@ -32,6 +32,7 @@ def upload_cafe24(access_token, id, category, image_url):
             "member_id": id,
             "reply_user_id": "admin",
             "reply_status": "N",
+            "board_category_no": int(category),
             "category_no": int(category),
             "attach_file_urls": [
                 {
@@ -55,6 +56,7 @@ def upload_cafe24(access_token, id, category, image_url):
             "member_id": id,
             "reply_user_id": "admin",
             "reply_status": "N",
+            "board_category_no": int(category),
             "category_no": int(category),
             "attach_file_urls": [
                 {
